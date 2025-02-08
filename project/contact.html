@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candy Crush Game</title>
+    <style>
+        /* CSS for styling the game board */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(5, 80px); /* Adjust the number of columns and size as needed */
+            grid-gap: 5px;
+            margin: 20px auto;
+        }
+
+        .candy {
+            width: 80px;
+            height: 80px;
+            background-color: #ff6600; /* Orange color for candies */
+            border: 2px solid #cc3300; /* Darker orange border */
+            border-radius: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Candy Crush Game</h1>
+    <div class="game-container" id="game-container"></div>
+
+    <script>
+        // JavaScript for generating candies and handling click events
+        const gameContainer = document.getElementById('game-container');
+        const candyColors = ['#ff6600', '#ff3366', '#33cc33', '#9966cc', '#ff9999']; // Define candy colors
+
+        // Create a 5x5 grid of candies
+        for (let i = 0; i < 25; i++) {
+            const candy = document.createElement('div');
+            candy.classList.add('candy');
+            candy.style.backgroundColor = candyColors[Math.floor(Math.random() * candyColors.length)]; // Random color
+            candy.addEventListener('click', handleCandyClick);
+            gameContainer.appendChild(candy);
+        }
+
+        function handleCandyClick(event) {
+            const clickedCandy = event.target;
+            const randomColor = candyColors[Math.floor(Math.random() * candyColors.length)]; // Random color
+
+            // Change the color of the clicked candy
+            clickedCandy.style.backgroundColor = randomColor;
+        }
+    </script>
+</body>
+</html>

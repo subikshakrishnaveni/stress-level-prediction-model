@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* Red button styling */
+.red-button {
+background-color: red;
+color: white;
+border: none;
+padding: 10px 20px;
+cursor: pointer;
+}
+/* Center the image */
+img {
+max-width: 100%;
+height: auto;
+}
+/* Set background image for the body */
+body {
+    background-image: url('https://cdn.pixabay.com/photo/2016/07/13/12/14/inspiration-1514296_1280.jpg'); /* https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTomUNRzSGa9yy3ESlOGxF39oPQX2IoOOhLIQ&usqp=CAU */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center center;
+    font-family: Arial, sans-serif; /* Specify a fallback font */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+}
+/* Add background color to the question container */
+.question-container {
+background-color: rgba(255, 255, 255, 0.8); /* You can choose the color and opacity you want */
+padding: 20px; /* Adjust the padding as needed */
+}
+/* Style the recording buttons container */
+.recording-container {
+display: flex;
+flex-direction: row;
+align-items: center;
+margin-top: 10px;
+}
+/* Style the recording buttons */
+.recording-container button {
+margin: 0 10px;
+}
+/* Style the container for the image and video buttons */
+.image-video-container {
+display: flex;
+flex-wrap: wrap;
+align-items: flex-start;
+margin-top: 20px;
+}
+/* Style the container for the image on the left side */
+.image-container {
+text-align: center;
+flex: 1;
+}
+/* Style the container for the video buttons on the right side */
+.video-container {
+flex: 1;
+}
+</style>
+</head>
+<body>
+<h1 style="text-align: center; color: antiquewhite;">ANALYSIS</h1>
+<div class="container question-container">
+<p>
+                What would you suggest your friend of he/she has the same trigger?
+            </p>
+            
+        </div>
+
+<!-- Add recording buttons container below the question in horizontal manner -->
+<div class="container recording-container">
+<button id="startRecordingAudio">Start Audio Recording</button>
+<button id="stopRecordingAudio" disabled>Stop Audio Recording</button>
+<button id="playAudio" disabled>Play Recorded Audio</button>
+<button id="startRecordingVideo">Start Video Recording</button>
+<button id="stopRecordingVideo" disabled>Stop Video Recording</button>
+<button id="playVideo" disabled>Play Recorded Video</button>
+</div>
+
+<div>
+    <div>   
+        <video id="videoPreview" width="640" height="480" autoplay></video>
+        <audio id="audioPreview" controls></audio>
+    </div>
+</div>
+
+<script>
+    let audioStream;
+        let videoStream;
+        let audioMediaRecorder;
+        let videoMediaRecorder;
+        let audioRecordedChunks = [];
+        let videoRecordedChunks = [];
+        let audioBlob;
+        let videoBlob;
+
+        const audioPreview = document.getElementById('audioPreview');
+        const videoPreview = document.getElementById('videoPreview');
+        const startRecordingAudioButton = document.getElementById('startRecordingAudio');
+        const stopRecordingAudioButton = document.getElementById('stopRecordingAudio');
+        const playAudioButton = document.getElementById('playAudio');
+        const startRecordingVideoButton = document.getElementById('startRecordingVideo');
+        const stopRecordingVideoButton = document.getElementById('stopRecordingVideo');
+        const playVideoButton = document.getElementById('playVideo');
+
+        // Start audio recording
+        async function startRecordingAudio() {
+            try {
+                audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioMediaRecorder = new MediaRecorder(audioStream);
+
+                audioMediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        audioRecordedChunks.push(event.data);
+                    }
+                };
+
+                audioMediaRecorder.onstop = () => {
+                    audioBlob = new Blob(audioRecordedChunks, { type: 'audio/wav' });
+                    audioPreview.src = URL.createObjectURL(audioBlob);
+                    playAudioButton.disabled = false;
+                };
+
+                audioMediaRecorder.start();
+                startRecordingAudioButton.disabled = true;
+                stopRecordingAudioButton.disabled = false;
+            } catch (error) {
+                console.error('Error accessing the microphone:', error);
+            }
+        }
+
+        // Stop audio recording
+        function stopRecordingAudio() {
+            if (audioMediaRecorder && audioMediaRecorder.state !== 'inactive') {
+                audioMediaRecorder.stop();
+                startRecordingAudioButton.disabled = false;
+                stopRecordingAudioButton.disabled = true;
+            }
+        }
+
+        // Play the recorded audio
+        function playRecordedAudio() {
+            if (audioBlob) {
+                const audioUrl = URL.createObjectURL(audioBlob);
+                audioPreview.src = audioUrl;
+                audioPreview.play();
+            }
+        }
+
+        // Start video recording
+        async function startRecordingVideo() {
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                videoMediaRecorder = new MediaRecorder(videoStream);
+
+                videoMediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        videoRecordedChunks.push(event.data);
+                    }
+                };
+
+                videoMediaRecorder.onstop = () => {
+                    videoBlob = new Blob(videoRecordedChunks, { type: 'video/webm' });
+                    videoPreview.src = URL.createObjectURL(videoBlob);
+                    playVideoButton.disabled = false;
+                };
+
+                videoMediaRecorder.start();
+                startRecordingVideoButton.disabled = true;
+                stopRecordingVideoButton.disabled = false;
+            } catch (error) {
+                console.error('Error accessing the camera and microphone:', error);
+            }
+        }
+
+        // Stop video recording
+        function stopRecordingVideo() {
+            if (videoMediaRecorder && videoMediaRecorder.state !== 'inactive') {
+                videoMediaRecorder.stop();
+                startRecordingVideoButton.disabled = false;
+                stopRecordingVideoButton.disabled = true;
+            }
+        }
+
+        // Play the recorded video
+        function playRecordedVideo() {
+            if (videoBlob) {
+                const videoUrl = URL.createObjectURL(videoBlob);
+                videoPreview.src = videoUrl;
+                videoPreview.play();
+            }
+        }
+
+        // Event listeners
+        startRecordingAudioButton.addEventListener('click', startRecordingAudio);
+        stopRecordingAudioButton.addEventListener('click', stopRecordingAudio);
+        playAudioButton.addEventListener('click', playRecordedAudio);
+        startRecordingVideoButton.addEventListener('click', startRecordingVideo);
+        stopRecordingVideoButton.addEventListener('click', stopRecordingVideo);
+        playVideoButton.addEventListener('click', playRecordedVideo);
+</script>
+<!-- Add container for the image on the left side and video buttons on the right side -->
+
+<!-- Add submit buttons below the image and video buttons -->
+<div style="text-align: center; margin-top: 20px;">
+    <button id="SubmitButton" class="red-button">Submit</button>
+    <button class="button" onclick="window.location.href='sp5.html'">MOVE TO NEXT</button >
+    </div>
+    </form>
+    </body>
+    </html>

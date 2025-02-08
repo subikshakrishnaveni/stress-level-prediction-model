@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            background-color:lavender; /* Background color for the page */
+        }
+
+        .image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+
+        .image {
+            max-width: 100%; /* Make the images as large as their container */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        .button {
+            background-color: #FF0000; /* Red (#FF0000) */
+            color: #fff;
+            padding: 15px 40px; /* Adjust button padding */
+            font-size: 24px; /* Adjust button font size */
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px; /* Add margin between image and button */
+        }
+    </style>
+</head>
+<body>
+    <div class="image-container">
+        <img src="XO.png" alt="Image 1" class="image"width="250" height="600">
+        <button class="button" onclick="window.location.href='game1.html'">X/O GAME</button >
+    </div>
+    <div class="image-container">
+        <img src="snake.jpeg" alt="Image 2" class="image">
+        <button class="button" onclick="window.location.href='ec.html'">SNAKE GAME</button>
+    <div class="image-container">
+        <img src="rpc.jpeg" alt="Image 2" class="image">
+        <button class="button" onclick="window.location.href='webpage.html'">RPS</button>
+        
+    
+    
+</body>
+</html>
